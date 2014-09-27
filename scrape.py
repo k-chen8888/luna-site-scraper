@@ -4,32 +4,46 @@ import requests
 
 # Wordpress
 from wordpress_xmlrpc import Client, WordPressPost
-from wordpress_xmlrpc.methods.posts import GetPosts, NewPost
-from wordpress_xmlrpc.methods.users import GetUserInfo
+from wordpress_xmlrpc.methods import posts
 
 
-r = requests.get("http://ameblo.jp/luna-luna-moonrise/")
-
-soup = BeautifulSoup(r.text) 
-
-
-# Get all relevant div elements
-div_list = soup.find_all("div", {"class": "entry"})
-
-
-# Dump each thing into a wordpress post
-new_posts = []
-i = 0
-for entry in div_list:
-	new_posts.append(WordPressPost())
-	new_posts[i].title = entry.find("h3").find("a").contents[0]
+def get_post_list(url):
+	r = requests.get(url)
 	
-	new_posts[i].content = "***Begin Original Content Here***\n"
+	soup = BeautifulSoup(r.text) 
 	
-	for p in entry.find("div", {"class": "contents"}).find("div", {"class": "subContents"}).find("div", {"class": "subContentsInner"}).find_all("p", {"class": "MsoNormal"}):
-		new_posts[i].content += str(p)
 	
+	# Get all relevant div elements
+	div_list = soup.find_all("div", {"class": "entry"})
+	
+	return div_list
 
-	i += 1
 
-print new_posts
+
+def post_to_wp(post_content):
+	# Set up wordpress to accept posts from script
+	wp = Client('http://127.0.0.1/xmlrpc.php', 'scion', 'scion')
+	
+	
+	# Dump each thing into a wordpress post
+	for entry in post_content:
+		new_post = WordPressPost()
+		new_post.title = unicode(entry.find("h3").find("a").contents[0])
+		
+		new_post.content = u"***Begin Original Content Here***\u000D"
+		
+		for p in entry.find("div", {"class": "contents"}).find("div", {"class": "subContents"}).find("div", {"class": "subContentsInner"}):
+			temp = unicode(p)
+			if temp != "entryBottom" and not "google_ad_section" in temp:
+				new_post.content += unicode(p)
+		
+		new_post.id = wp.call(posts.NewPost(new_post))
+		
+		# Publish the post
+		new_post.post_status = 'publish'
+		wp.call(posts.EditPost(new_post.id, new_post))
+
+
+
+if __name__ == "__main__":
+	post_to_wp(get_post_list("http://ameblo.jp/luna-luna-moonrise/"))
