@@ -1,29 +1,9 @@
-# Beautiful Soup
-from bs4 import BeautifulSoup
-import requests
-
 # Wordpress
 from wordpress_xmlrpc import Client, WordPressPost
 from wordpress_xmlrpc.methods import posts
 
 # Allow command line arguments through sys
 import sys
-
-
-# Scraper for ameblo.jp
-def get_post_list_ameblo(url):
-	r = requests.get(url)
-	soup = BeautifulSoup(r.text) 
-	
-	# Get all relevant div elements
-	div_list = soup.find_all("div", {"class": "entry"})
-	
-	return div_list
-
-
-# Scraper for sonymusic.co.jp
-def get_post_list_sonymusic(url):
-	r = requests.get(url)
 
 
 # Post to Wordpress
