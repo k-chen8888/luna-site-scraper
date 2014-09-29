@@ -5,30 +5,15 @@ from wordpress_xmlrpc.methods import posts
 # Allow command line arguments through sys
 import sys
 
+# Use modules
+from sites import scrape_tools, do_not_repeat
+from post import wp_writer
 
-# Post to Wordpress
-def post_to_wp(post_content, cred):
-	# Set up wordpress to accept posts from script
+
+# Get the title and content of every post and put it in an array
+def get_all_content(cred):
 	wp = Client(cred[0], cred[1], cred[2])
-	
-	
-	# Dump each thing into a wordpress post
-	for entry in post_content:
-		new_post = WordPressPost()
-		new_post.title = unicode(entry.find("h3").find("a").contents[0])
-		
-		new_post.content = u"***Begin Original Content Here***\u000D"
-		
-		for p in entry.find("div", {"class": "contents"}).find("div", {"class": "subContents"}).find("div", {"class": "subContentsInner"}):
-			temp = unicode(p)
-			if temp != "entryBottom" and not "google_ad_section" in temp:
-				new_post.content += unicode(p)
-		
-		new_post.id = wp.call(posts.NewPost(new_post))
-		
-		# Publish the post
-		new_post.post_status = 'publish'
-		wp.call(posts.EditPost(new_post.id, new_post))
+	return [ [x.title, x.content] for x in wp.call(posts.GetPosts()) ]
 
 
 
@@ -39,7 +24,7 @@ if __name__ == "__main__":
 		if len(urls) == 0:
 			print "Nothing to scrape"
 			return
-
+		
 		wp_info = open(sys.argv[2], 'r')
 		wp_cred = [x for x in wp_info.readline()]
 		if len(wp_cred) != 3:
@@ -57,8 +42,8 @@ if __name__ == "__main__":
 	# Get the actual content and dump it to Wordpress
 	for url in urls:
 		if 'ameblo.jp' in url:
-			post_to_wp(get_post_list_ameblo(url), wp_cred)
+			post_to_wp_ameblo(get_post_list_ameblo(url), wp_cred)
 		elif 'sonymusic.co.jp' in url:
-			post_to_wp(get_post_list_sonymusic(url), wp_cred)
+			post_to_wp_sonymusic(get_post_list_sonymusic(url), wp_cred)
 		else:
 			print "Malformed file"
