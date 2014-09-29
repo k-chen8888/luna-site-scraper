@@ -23,7 +23,7 @@ def get_post_list_sonymusic(url):
 
 def post_to_wp(post_content, cred):
 	# Set up wordpress to accept posts from script
-	wp = Client(target, cred[0], cred[1], cred[2])
+	wp = Client(cred[0], cred[1], cred[2])
 	
 	
 	# Dump each thing into a wordpress post
