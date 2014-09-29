@@ -54,6 +54,6 @@ if __name__ == "__main__":
 	
 	for url in url.readline():
 		if 'ameblo.jp' in url:
-			post_to_wp(get_post_list_ameblo(url), 'scion', 'scion')
+			post_to_wp(get_post_list_ameblo(url), wp_cred[0], wp_cred[1], wp_cred[2])
 		elif 'sonymusic.co.jp' in url:
 			post_to_wp(get_post_list_sonymusic(url), wp_cred[0], wp_cred[1], wp_cred[2])
