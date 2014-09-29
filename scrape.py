@@ -21,9 +21,9 @@ def get_post_list_sonymusic(url):
 	r = requests.get(url)
 
 
-def post_to_wp(post_content, target, user, pw):
+def post_to_wp(post_content, cred):
 	# Set up wordpress to accept posts from script
-	wp = Client(target, user, pw)
+	wp = Client(target, cred[0], cred[1], cred[2])
 	
 	
 	# Dump each thing into a wordpress post
@@ -51,9 +51,14 @@ if __name__ == "__main__":
 	wp_info = open('wp_info.txt', 'r')
 	
 	wp_cred = [x for x in wp_info.readline()]
-	
+	if len(wp_cred) != 3:
+		print "Malformed file"
+		return
+
 	for url in url.readline():
 		if 'ameblo.jp' in url:
-			post_to_wp(get_post_list_ameblo(url), wp_cred[0], wp_cred[1], wp_cred[2])
+			post_to_wp(get_post_list_ameblo(url), wp_cred)
 		elif 'sonymusic.co.jp' in url:
-			post_to_wp(get_post_list_sonymusic(url), wp_cred[0], wp_cred[1], wp_cred[2])
+			post_to_wp(get_post_list_sonymusic(url), wp_cred)
+		else:
+			print "Malformed file"
