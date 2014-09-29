@@ -6,7 +6,11 @@ import requests
 from wordpress_xmlrpc import Client, WordPressPost
 from wordpress_xmlrpc.methods import posts
 
+# Allow command line arguments through sys
+import sys
 
+
+# Scraper for ameblo.jp
 def get_post_list_ameblo(url):
 	r = requests.get(url)
 	soup = BeautifulSoup(r.text) 
@@ -17,10 +21,12 @@ def get_post_list_ameblo(url):
 	return div_list
 
 
+# Scraper for sonymusic.co.jp
 def get_post_list_sonymusic(url):
 	r = requests.get(url)
 
 
+# Post to Wordpress
 def post_to_wp(post_content, cred):
 	# Set up wordpress to accept posts from script
 	wp = Client(cred[0], cred[1], cred[2])
@@ -47,14 +53,20 @@ def post_to_wp(post_content, cred):
 
 
 if __name__ == "__main__":
-	urls = open('url_list.txt', 'r')
-	wp_info = open('wp_info.txt', 'r')
-	
-	wp_cred = [x for x in wp_info.readline()]
-	if len(wp_cred) != 3:
-		print "Malformed file"
-		return
+	try:
+		urls = open(sys.argv[1], 'r')
+		wp_info = open(sys.argv[2], 'r')
 
+		wp_cred = [x for x in wp_info.readline()]
+		if len(wp_cred) != 3:
+			print "Malformed file"
+			return
+	
+	except IOError:
+		print "Not a file"
+		return
+	
+	# Get the actual content and dump it to Wordpress
 	for url in url.readline():
 		if 'ameblo.jp' in url:
 			post_to_wp(get_post_list_ameblo(url), wp_cred)
