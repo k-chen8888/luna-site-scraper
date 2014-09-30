@@ -24,7 +24,7 @@ def get_post_list_sonymusic(url):
 	pages = [ BeautifulSoup(requests.get("%s%s" % (url, a.find('a')['href'][19:])).text) for a in articles ] 
 			
 	# Get relevant div elements
-	div_list = [ p.find("div", {"id": "infoDetailArea"}) for p in pages ]
+	div_list = [ p.find("div", {"id": "infoDetailArea"}) for p in pages ]	
 	
 	return div_list
 

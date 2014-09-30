@@ -18,7 +18,7 @@ def post_to_wp_ameblo(post_content, cred):
 		for p in entry.find("div", {"class": "contents"}).find("div", {"class": "subContents"}).find("div", {"class": "subContentsInner"}):
 			temp = unicode(p)
 			if temp != "entryBottom" and not "google_ad_section" in temp:
-				new_post.content += unicode(p)
+				new_post.content += temp
 		
 		new_post.id = wp.call(posts.NewPost(new_post))
 		
@@ -31,6 +31,22 @@ def post_to_wp_ameblo(post_content, cred):
 def post_to_wp_sonymusic(post_content, cred):
 	# Set up wordpress to accept posts from script
 	wp = Client(cred[0], cred[1], cred[2])
+	
+	for entry in post_content:
+		new_post = WordPressPost()
+		new_post.title = unicode(entry.find("p", {"id", "infoCaption"}).contents[0])
+		
+		new_post.content = u"***Begin Original Content Here***\u000D"
+		
+		for p in entry.find("div", {"id": "infoArticle"}):
+			temp = unicode(p)
+			new_post.content += temp
+	
+		new_post.id = wp.call(posts.NewPost(new_post))
+
+		# Publish the post
+		new_post.post_status = 'publish'
+		wp.call(posts.EditPost(new_post.id, new_post))
 
 
 
