@@ -29,4 +29,10 @@ def post_to_wp_ameblo(post_content, cred):
 
 # Post sonymusic posts to Wordpress
 def post_to_wp_sonymusic(post_content, cred):
+	# Set up wordpress to accept posts from script
+	wp = Client(cred[0], cred[1], cred[2])
+
+
+
+if __name__ == "__main__":
 	pass

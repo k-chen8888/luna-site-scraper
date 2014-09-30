@@ -21,15 +21,13 @@ def get_post_list_sonymusic(url):
 	
 	# Get the urls for the actual posts
 	articles = soup.find("ul", {"class": "utilList"}).find_all("p", {"class": "listSubject"})
-	pages = []
-	for a in articles:
-		new_url = "%s%s" % (url, a.find('a')['href'][19:])
-		pages.append(BeautifulSoup(requests.get(new_url).text))
-	
+	pages = [ BeautifulSoup(requests.get("%s%s" % (url, a.find('a')['href'][19:])).text) for a in articles ] 
+			
 	# Get relevant div elements
 	div_list = [ p.find("div", {"id": "infoDetailArea"}) for p in pages ]
 	
 	return div_list
+
 
 
 if __name__ == "__main__":
