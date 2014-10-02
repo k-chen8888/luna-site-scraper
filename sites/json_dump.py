@@ -14,7 +14,9 @@ def json_dump(content, source, loc):
 	try:
 		os.chdir(loc)
 	except OSError:
-		return
+		return []
+	
+	files = []
 	
 	# Each entry has either been indexed already or needs to be indexed
 	for entry in content:
@@ -28,9 +30,12 @@ def json_dump(content, source, loc):
 
 		if not os.path.isfile(new_file_name):
 			json.dump(entry, open(new_file_name, 'w'))
+			files.append(new_file_name)
 		else:
+			pass
 			# Check contents of file and replace as needed
-
+	
+	return files
 
 
 # Checks if content matches existing content
