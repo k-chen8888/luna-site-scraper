@@ -14,6 +14,7 @@ def post_to_wp_ameblo(post_content, cred):
 		new_post.title = unicode(entry.find("h3").find("a").contents[0])
 		
 		new_post.content = u"***Begin Original Content Here***\u000D"
+		new_post.content += unicode(entry.find("span", {"class": "date"}).contents[0]) + u"\u000D"
 		
 		for p in entry.find("div", {"class": "contents"}).find("div", {"class": "subContents"}).find("div", {"class": "subContentsInner"}):
 			temp = unicode(p)
