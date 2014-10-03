@@ -1,6 +1,7 @@
 # Beautiful Soup
 from bs4 import BeautifulSoup
 import requests
+import json_dump
 
 
 # Scraper for ameblo.jp
@@ -22,7 +23,7 @@ def get_post_list_sonymusic(url):
 	# Get the urls for the actual posts
 	articles = soup.find("ul", {"class": "utilList"}).find_all("p", {"class": "listSubject"})
 	pages = [ BeautifulSoup(requests.get("%s%s" % (url, a.find('a')['href'][19:])).text) for a in articles ] 
-			
+	
 	# Get relevant div elements
 	div_list = [ p.find("div", {"id": "infoDetailArea"}) for p in pages ]	
 	
@@ -31,4 +32,5 @@ def get_post_list_sonymusic(url):
 
 
 if __name__ == "__main__":
-	get_post_list_sonymusic("http://www.sonymusic.co.jp/artist/Lunaharuna/")
+	l = get_post_list_sonymusic("http://www.sonymusic.co.jp/artist/Lunaharuna/")
+	json_dump(l, "sonymusic", "/json")
