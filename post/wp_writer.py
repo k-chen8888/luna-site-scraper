@@ -11,12 +11,13 @@ def post_to_wp_ameblo(post_content, cred):
 	# Dump each thing into a wordpress post
 	for entry in post_content:
 		new_post = WordPressPost()
-		new_post.title = unicode(entry.find("h3").find("a").contents[0])
+		new_post.title = unicode(entry[0].find("h3").find("a").contents[0])
 		
 		new_post.content = u"***Begin Original Content Here***\u000D"
-		new_post.content += unicode(entry.find("span", {"class": "date"}).contents[0]) + u"\u000D"
-		
-		for p in entry.find("div", {"class": "contents"}).find("div", {"class": "subContents"}).find("div", {"class": "subContentsInner"}):
+		new_post.content += u"Posted on: " + unicode(entry[0].find("span", {"class": "date"}).contents[0]) + u"\u000D"
+		new_post.content += u"<a href=\u0022" + entry[1] + u"\u0022>See original post</a>\u000D"
+
+		for p in entry[0].find("div", {"class": "contents"}).find("div", {"class": "subContents"}).find("div", {"class": "subContentsInner"}):
 			temp = unicode(p)
 			if temp != "entryBottom" and not "google_ad_section" in temp:
 				new_post.content += temp
@@ -35,11 +36,13 @@ def post_to_wp_sonymusic(post_content, cred):
 	
 	for entry in post_content:
 		new_post = WordPressPost()
-		new_post.title = unicode(entry.find("p", {"id", "infoCaption"}).contents[0])
+		new_post.title = unicode(entry[0].find_all("p")[0].contents[0])
 		
 		new_post.content = u"***Begin Original Content Here***\u000D"
+		new_post.content += u"Posted on: " + entry[0].find("p", {"class": "infoDate"}).contents[0] + u"\u000D"
+		new_post.content += u"<a href=\u0022" + entry[1] + u"\u0022>See original post</a>\u000D"
 		
-		for p in entry.find("div", {"id": "infoArticle"}):
+		for p in entry[0].find("div", {"id": "infoArticle"}):
 			temp = unicode(p)
 			new_post.content += temp
 	

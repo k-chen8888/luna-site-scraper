@@ -6,3 +6,5 @@ url_list.txt
 
 wp_info.txt
 	xmlrpc URL, user, pass
+
+All JSON info is saved in a folder called json in the same directory as scrape.py

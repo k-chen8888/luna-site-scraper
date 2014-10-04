@@ -30,17 +30,17 @@ def json_dump(content, source, loc):
 		# Use different tools depending on source
 		if source == "ameblo":
 			# Clean up date and encorporate into file
-			for x in [i for i in entry.find("span", {"class": "date"}).contents[0].strip('- :') if i.isdigit()]:
+			for x in [i for i in entry[0].find("span", {"class": "date"}).contents[0].strip('- :') if i.isdigit()]:
 				new_file_name += unicode(x)
 				
 			# Convert to dictionary before feeding to json loader
-			dict_content = extract_dict_ameblo(entry)
+			dict_content = extract_dict_ameblo(entry[0])
 		
 		elif source == "sonymusic":
-			for x in [i for i in entry.find("p", {"class": "infoDate"}).contents[0].strip('- :') if i.isdigit()]:
+			for x in [i for i in entry[0].find("p", {"class": "infoDate"}).contents[0].strip('- :') if i.isdigit()]:
 				new_file_name += unicode(x)
 			
-			dict_content = extract_dict_sonymusic(entry)
+			dict_content = extract_dict_sonymusic(entry[0])
 			
 		new_file_name += ".txt"
 		new_file_name = new_file_name.decode('ascii')
@@ -59,11 +59,15 @@ def json_dump(content, source, loc):
 			with open(new_file_name, 'r+') as old_json:
 				if check_contents(old_json, json_temp):
 					files.append([new_file_name, 'e'])
-				
+				else:
+					files.append([new_file_name, 'o'])
+					
 				old_json.close()
 	
 	for f in files:
 		print f
+	
+	os.chdir("..")
 	
 	return files
 
@@ -132,8 +136,6 @@ def extract_dict_sonymusic(entry):
 			
 			dict_out['p'][name] = unicode(e.text).encode('utf-8')
 			counter = counter + 1
-	
-	print dict_out
 	
 	return dict_out
 

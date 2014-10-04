@@ -10,7 +10,9 @@ def get_post_list_ameblo(url):
 	soup = BeautifulSoup(r.text) 
 	
 	# Get all relevant div elements
-	div_list = soup.find_all("div", {"class": "entry"})
+	div_list = [ [d] for d in soup.find_all("div", {"class": "entry"}) ]
+	for x in range(0, len(div_list)):
+		div_list[x].append(div_list[x][0].find("h3").find("a")['href'])
 	
 	return div_list
 
@@ -22,10 +24,13 @@ def get_post_list_sonymusic(url):
 	
 	# Get the urls for the actual posts
 	articles = soup.find("ul", {"class": "utilList"}).find_all("p", {"class": "listSubject"})
-	pages = [ BeautifulSoup(requests.get("%s%s" % (url, a.find('a')['href'][19:])).text) for a in articles ] 
+	urls_list = [ "%s%s" % (url, a.find('a')['href'][19:]) for a in articles ]
+	pages = [ BeautifulSoup(requests.get(u).text) for u in urls_list ] 
 	
 	# Get relevant div elements
-	div_list = [ p.find("div", {"id": "infoDetailArea"}) for p in pages ]	
+	div_list = [ [p.find("div", {"id": "infoDetailArea"})] for p in pages ]
+	for x in range(0, len(urls_list)):
+		div_list[x].append(urls_list[x])
 	
 	return div_list
 
