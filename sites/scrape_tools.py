@@ -32,5 +32,4 @@ def get_post_list_sonymusic(url):
 
 
 if __name__ == "__main__":
-	l = get_post_list_ameblo("http://ameblo.jp/luna-luna-moonrise/")	
-	json_dump(l, "ameblo", "json")
+	pass

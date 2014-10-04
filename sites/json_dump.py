@@ -35,9 +35,13 @@ def json_dump(content, source, loc):
 				
 			# Convert to dictionary before feeding to json loader
 			dict_content = extract_dict_ameblo(entry)
-		else:
-			new_file_name += u"sme"
 		
+		elif source == "sonymusic":
+			for x in [i for i in entry.find("p", {"class": "infoDate"}).contents[0].strip('- :') if i.isdigit()]:
+				new_file_name += unicode(x)
+			
+			dict_content = extract_dict_sonymusic(entry)
+			
 		new_file_name += ".txt"
 		new_file_name = new_file_name.decode('ascii')
 		
@@ -95,15 +99,41 @@ def extract_dict_ameblo(entry):
 	dict_out['date'] = unicode(entry.find("span", {"class": "date"}).contents[0]).encode('utf-8')
 	dict_out['p'] = {}
 	
-	# The only things needed are the date and the paragraphs
+	# Get all elements that have content in them
 	counter = 0
 	for p in entry.findAll("p"):
 		if counter < 10:
 			name = 'line_0' + str(counter)
 		else:
 			name = 'line_' + str(counter)
+		
 		dict_out['p'][name] = unicode(p.text).encode('utf-8')
 		counter = counter + 1
+	
+	return dict_out
+
+
+# Converts BeautifulSoup for sonymusic to a dictionary
+def extract_dict_sonymusic(entry):
+	dict_out = {}
+	
+	dict_out['title'] = unicode(entry.find("p", {"id": "infoCaption"}).contents[0]).encode('utf-8')
+	dict_out['date'] = unicode(entry.find("p", {"class": "infoDate"}).contents[0]).encode('utf-8')
+	dict_out['p'] = {}
+	
+	# Get all elements that have content in them
+	counter = 0
+	for e in entry.findChildren():
+		if e.name != "br":
+			if counter < 10:
+				name = 'line_0' + str(counter)
+			else:
+				name = 'line_' + str(counter)
+			
+			dict_out['p'][name] = unicode(e.text).encode('utf-8')
+			counter = counter + 1
+	
+	print dict_out
 	
 	return dict_out
 
