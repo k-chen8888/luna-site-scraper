@@ -1,7 +1,7 @@
 # Beautiful Soup
 from bs4 import BeautifulSoup
 import requests
-import json_dump
+from json_dump import json_dump
 
 
 # Scraper for ameblo.jp
@@ -32,5 +32,5 @@ def get_post_list_sonymusic(url):
 
 
 if __name__ == "__main__":
-	l = get_post_list_sonymusic("http://www.sonymusic.co.jp/artist/Lunaharuna/")
-	json_dump(l, "sonymusic", "/json")
+	l = get_post_list_ameblo("http://ameblo.jp/luna-luna-moonrise/")	
+	json_dump(l, "ameblo", "json")
