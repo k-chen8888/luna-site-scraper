@@ -4,6 +4,7 @@ import os
 from bs4 import BeautifulSoup
 
 
+
 # Dump content to json based on source
 # 	Source is a string that identifies the location from which information was pulled
 # Searches in the location given for that json 
@@ -42,7 +43,7 @@ def json_dump(content, source, loc):
 		
 		# Dump to JSON
 		json_temp = json.dumps(dict_content, ensure_ascii=False, indent=4, sort_keys=True)
-
+		
 		if not os.path.isfile(new_file_name):
 			with open(new_file_name, 'w') as outfile:
 				outfile.write(json_temp)
@@ -68,8 +69,9 @@ def json_dump(content, source, loc):
 # On changes, replace
 # Returns true if contents replaced
 def check_contents(old_content, new_content):
-	old_temp = json.dumps(old_content.read(), ensure_ascii=False, indent=4, sort_keys=True)
-	if old_temp == new_content:
+	old_temp = json.dumps(json.load(old_content), ensure_ascii=False, indent=4, sort_keys=True)
+
+	if old_temp != new_content.decode('utf-8'):
 		# Erase file
 		old_content.seek(0)
 		old_content.truncate()
@@ -78,6 +80,8 @@ def check_contents(old_content, new_content):
 		old_content.write(new_content)
 		
 		return True
+		
+	# No changes if content matches
 	else:
 		print "match"
 		return False
